@@ -6,6 +6,10 @@
   <Folder Name="/.resources/">
     <File Path=".resources/icon.png" />
   </Folder>
+  <Folder Name="/docs/">
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Maple.Result.Extensions.MinimalApi/Maple.Result.Extensions.MinimalApi.csproj" />
   </Folder>
