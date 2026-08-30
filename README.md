@@ -18,7 +18,6 @@ Do you like it? Show your support by giving this project a star!
 ✅ Integration tests.  
 ✅ Custom error mapping passed as a parameter to the extension method.  
 ✅ Support for custom successful status codes.  
-🔲 Support for global configuration.  
 🔲 Documentation.
 
 # Usage
