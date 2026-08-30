@@ -21,6 +21,8 @@ internal static class MinimalApiEndpoints
         MapErrorEndpoints(group);
         MapSuccessStatusCodeEndpoints(group);
         MapSuccessMappingEndpoints(group);
+        MapErrorDetailsEndpoints(group);
+        MapErrorCategoryEndpoints(group);
     }
 
     #region helper methods
@@ -100,6 +102,51 @@ internal static class MinimalApiEndpoints
         endpoints.MapGet("success-mapping/error/custom-mapping",
             () => Result.FromError(CreateFailureError())
                 .ToMinimalApiResult(MapSuccess, MapFailureToPaymentRequired));
+    }
+
+    private static void MapErrorDetailsEndpoints(IEndpointRouteBuilder endpoints)
+    {
+        // Both RFC 9457 extensions: the "errors" array and the top-level "detailTemplated".
+        endpoints.MapGet("error/details", () =>
+        {
+            var error = Error.Validation(
+                ErrorUri.Tag("tag:test.com,2026:validation"),
+                "Validation title",
+                "Validation detail.",
+                ErrorUri.Locator("https://test.com/instances/validation"),
+                "test.validation.failed",
+                ("errorCode", (object)"TV17"));
+
+            error.AddDetail("/age", "must be a positive integer", "test.age.mustBePositive", ("min", (object)0));
+
+            // No pointer and no templated message, so both are omitted from the serialized detail.
+            error.AddDetail(null, "must be provided");
+
+            // A template id without parameters: AddDetail still yields an empty parameter collection,
+            // unlike the Error factories, which leave it unset.
+            error.AddDetail("/name", "must not be empty", "test.name.required");
+
+            return Result.FromError(error).ToMinimalApiResult();
+        });
+
+        // Only the top-level "detailTemplated" extension, with no individual error details.
+        endpoints.MapGet("error/detail-templated", () => Result.FromError(Error.Conflict(
+            ErrorUri.Tag("tag:test.com,2026:conflict"),
+            "Conflict title",
+            "Conflict detail.",
+            null,
+            "test.conflict.occurred")).ToMinimalApiResult());
+    }
+
+    private static void MapErrorCategoryEndpoints(IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapGet("error/category/{category}", (ErrorCategory category) => Result.FromError(new Error
+        {
+            Category = category,
+            TypeUri = "about:blank",
+            Title = "Category title",
+            Detail = "Category detail."
+        }).ToMinimalApiResult());
     }
 
     private static Error CreateFailureError()

@@ -145,6 +145,103 @@ public class ResultExtensionsMinimalApiFunctionalTests : IClassFixture<TestAppli
 
     #endregion
 
+    #region error extensions
+
+    [Fact]
+    public async Task ToMinimalApiResult_ErrorWithDetails_ReturnsProblemDetailsWithErrorsAndTemplatedExtensions()
+    {
+        // Arrange
+        const string ExpectedJson =
+            """
+            {
+              "type": "tag:test.com,2026:validation",
+              "title": "Validation title",
+              "status": 400,
+              "detail": "Validation detail.",
+              "instance": "https://test.com/instances/validation",
+              "errors": [
+                {
+                  "pointer": "/age",
+                  "detail": "must be a positive integer",
+                  "detailTemplated": {
+                    "templateId": "test.age.mustBePositive",
+                    "params": { "min": 0 }
+                  }
+                },
+                {
+                  "detail": "must be provided"
+                }
+              ,{
+                  "pointer": "/name",
+                  "detail": "must not be empty",
+                  "detailTemplated": { "templateId": "test.name.required", "params": {} }
+                }
+              ],
+              "detailTemplated": {
+                "templateId": "test.validation.failed",
+                "params": { "errorCode": "TV17" }
+              }
+            }
+            """;
+
+        // Act
+        var (statusCode, json) = await GetAsync(_sut, "minimal/error/details");
+
+        // Assert
+        statusCode.ShouldBe(HttpStatusCode.BadRequest);
+        json.ShouldBe(JsonHelper.Normalize(ExpectedJson));
+    }
+
+    [Fact]
+    public async Task ToMinimalApiResult_ErrorWithTemplatedDetailOnly_ReturnsProblemDetailsWithoutErrorsExtension()
+    {
+        // Arrange
+        const string ExpectedJson =
+            """
+            {
+              "type": "tag:test.com,2026:conflict",
+              "title": "Conflict title",
+              "status": 409,
+              "detail": "Conflict detail.",
+              "detailTemplated": { "templateId": "test.conflict.occurred" }
+            }
+            """;
+
+        // Act
+        var (statusCode, json) = await GetAsync(_sut, "minimal/error/detail-templated");
+
+        // Assert
+        statusCode.ShouldBe(HttpStatusCode.Conflict);
+        json.ShouldBe(JsonHelper.Normalize(ExpectedJson));
+    }
+
+    #endregion
+
+    #region error categories
+
+    [Theory]
+    [InlineData(ErrorCategory.Validation, HttpStatusCode.BadRequest)]
+    [InlineData(ErrorCategory.Unauthenticated, HttpStatusCode.Unauthorized)]
+    [InlineData(ErrorCategory.Unauthorized, HttpStatusCode.Forbidden)]
+    [InlineData(ErrorCategory.NotFound, HttpStatusCode.NotFound)]
+    [InlineData(ErrorCategory.Timeout, HttpStatusCode.RequestTimeout)]
+    [InlineData(ErrorCategory.Conflict, HttpStatusCode.Conflict)]
+    [InlineData(ErrorCategory.Failure, HttpStatusCode.UnprocessableEntity)]
+    [InlineData(ErrorCategory.Critical, HttpStatusCode.InternalServerError)]
+    [InlineData(ErrorCategory.NotImplemented, HttpStatusCode.NotImplemented)]
+    [InlineData(ErrorCategory.Unavailable, HttpStatusCode.ServiceUnavailable)]
+    public async Task ToMinimalApiResult_Error_MapsCategoryToStatusCode(ErrorCategory category,
+        HttpStatusCode expectedStatusCode)
+    {
+        // Act
+        var (statusCode, _) = await GetAsync(_sut, $"minimal/error/category/{category}");
+
+        // Assert
+        statusCode.ShouldBe(expectedStatusCode);
+    }
+
+    #endregion
+
     #region custom mappings passed to the method
 
     [Fact]
