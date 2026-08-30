@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Maple.Result.Extensions.MinimalApi</AssemblyName>
+
+    <PackageId>Maple.Result.Extensions.MinimalApi</PackageId>
+    <Title>Provides mapping of the Maple.Result to the .NET Minimal API IResult.</Title>
+    <Description>Provides mapping of the Maple.Result to the .NET Minimal API IResult.</Description>
+    <Authors>Tom Maple</Authors>
+    <PublisherName>Tom Maple</PublisherName>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageTags>Result;Error;RFC-9457;RFC-7807</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <PackageProjectUrl>https://github.com/TomMaple/Maple.Result.Extensions.MinimalApi</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TomMaple/Maple.Result.Extensions.MinimalApi</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsAotCompatible>true</IsAotCompatible>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Maple.Result" Version="2.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\.resources\icon.png" Pack="true" PackagePath="" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>
