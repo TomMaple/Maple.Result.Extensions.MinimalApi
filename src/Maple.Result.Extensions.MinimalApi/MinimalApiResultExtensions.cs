@@ -106,7 +106,6 @@ public static class MinimalApiResultExtensions
                 : Results.Ok(result.Value),
             error => error.ToMinimalApiResult(customMapping));
     }
-
     /// <summary>
     ///     Creates an <see cref="IResult" /> from a <see cref="Result{T}" /> instance, using the given
     ///     HTTP status code when it is successful.
@@ -116,10 +115,37 @@ public static class MinimalApiResultExtensions
     ///     the passed function. If successful, this is also the type of the parameter passed to that function.
     /// </typeparam>
     /// <param name="result">The <see cref="Result{T}" /> to convert.</param>
-    /// <param name="successStatusCode">The HTTP status code returned when the <see cref="Result{T}" /> is successful.</param>
+    /// <param name="successStatusCode">
+    ///     The HTTP status code returned when the <see cref="Result{T}" /> is successful. It is also used when
+    ///     the <see cref="Result{T}" /> is successful, but its value is <see langword="null" />; use the overload
+    ///     taking a <c>successNoResponseStatusCode</c> to return a different status code in that case.
+    /// </param>
+    /// <param name="customMapping">
+    ///     An optional custom mapping function used to convert an <see cref="Error" /> to an <see cref="IResult" />.
+    ///     It is used when it returns a non-<see langword="null" /> value.
+    /// </param>
+    /// <returns>An <see cref="IResult" /> representing the <see cref="Result{T}" />.</returns>
+    public static IResult ToMinimalApiResult<T>(this Result<T> result, int successStatusCode,
+        Func<Error, IResult?>? customMapping = null)
+    {
+        return result.ToMinimalApiResult(successStatusCode, successStatusCode, customMapping);
+    }
+
+    /// <summary>
+    ///     Creates an <see cref="IResult" /> from a <see cref="Result{T}" /> instance, using the given
+    ///     HTTP status codes when it is successful.
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The type of the <see cref="Result{T}" /> value used to determine whether to execute
+    ///     the passed function. If successful, this is also the type of the parameter passed to that function.
+    /// </typeparam>
+    /// <param name="result">The <see cref="Result{T}" /> to convert.</param>
+    /// <param name="successStatusCode">
+    ///     The HTTP status code returned when the <see cref="Result{T}" /> is successful and carries a value.
+    /// </param>
     /// <param name="successNoResponseStatusCode">
-    ///     An optional HTTP status code returned when the <see cref="Result{T}" /> is successful, but its value
-    ///     is <see langword="null" />. When it is not provided, the <paramref name="successStatusCode" /> is used.
+    ///     The HTTP status code returned when the <see cref="Result{T}" /> is successful, but its value
+    ///     is <see langword="null" />.
     /// </param>
     /// <param name="customMapping">
     ///     An optional custom mapping function used to convert an <see cref="Error" /> to an <see cref="IResult" />.
@@ -137,13 +163,13 @@ public static class MinimalApiResultExtensions
                         "Registering the serialized type with a JsonSerializerContext stays the caller's " +
                         "responsibility, as it is for every other Results method that writes a JSON body.")]
     public static IResult ToMinimalApiResult<T>(this Result<T> result, int successStatusCode,
-        int? successNoResponseStatusCode = null, Func<Error, IResult?>? customMapping = null)
+        int successNoResponseStatusCode, Func<Error, IResult?>? customMapping = null)
     {
         ArgumentNullException.ThrowIfNull(result);
 
         return result.Match(
             value => value is null
-                ? Results.StatusCode(successNoResponseStatusCode ?? successStatusCode)
+                ? Results.StatusCode(successNoResponseStatusCode)
                 : Results.Json(result.Value, statusCode: successStatusCode),
             error => error.ToMinimalApiResult(customMapping));
     }

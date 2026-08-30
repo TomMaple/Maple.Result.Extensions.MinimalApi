@@ -71,6 +71,17 @@ internal static class MinimalApiEndpoints
 
         endpoints.MapGet("status-code/error",
             () => Result.FromError(CreateFailureError()).ToMinimalApiResult(StatusCodes.Status202Accepted));
+
+        // Result<T> with a status code and a positional custom mapping.
+        endpoints.MapGet("status-code/error/custom-mapping",
+            () => Result<TestValue>.FromError(CreateFailureError())
+                .ToMinimalApiResult(StatusCodes.Status201Created, MapFailureToPaymentRequired));
+
+        // Result<T> with both status codes and a positional custom mapping.
+        endpoints.MapGet("status-code/error/no-response-status-code/custom-mapping",
+            () => Result<TestValue>.FromError(CreateFailureError())
+                .ToMinimalApiResult(StatusCodes.Status201Created, StatusCodes.Status205ResetContent,
+                    MapFailureToPaymentRequired));
     }
 
     private static void MapSuccessMappingEndpoints(IEndpointRouteBuilder endpoints)

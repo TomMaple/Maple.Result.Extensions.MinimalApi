@@ -228,6 +228,28 @@ public class ResultExtensionsMinimalApiFunctionalTests : IClassFixture<TestAppli
         json.ShouldBe(JsonHelper.Normalize(ExpectedFailureJson));
     }
 
+    [Fact]
+    public async Task ToMinimalApiResult_ValueResultErrorWithSuccessStatusCodeAndPositionalMapping_ReturnsCustomMappedResponse()
+    {
+        // Act
+        var (statusCode, json) = await GetAsync(_sut, "minimal/status-code/error/custom-mapping");
+
+        // Assert
+        statusCode.ShouldBe(HttpStatusCode.PaymentRequired);
+        json.ShouldBe(JsonHelper.Normalize(ExpectedFailureMappingJson));
+    }
+
+    [Fact]
+    public async Task ToMinimalApiResult_ValueResultErrorWithBothStatusCodesAndPositionalMapping_ReturnsCustomMappedResponse()
+    {
+        // Act
+        var (statusCode, json) = await GetAsync(_sut, "minimal/status-code/error/no-response-status-code/custom-mapping");
+
+        // Assert
+        statusCode.ShouldBe(HttpStatusCode.PaymentRequired);
+        json.ShouldBe(JsonHelper.Normalize(ExpectedFailureMappingJson));
+    }
+
     #endregion
 
     #region success mapping
