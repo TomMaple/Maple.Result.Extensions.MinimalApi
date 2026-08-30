@@ -15,21 +15,20 @@ public sealed record TemplatedMessage
     ///     Initializes a new instance of the <see cref="TemplatedMessage" /> class with the specified template identifier and
     ///     optional parameters.
     /// </summary>
-    /// <param name="TemplateId">The identifier of the message template.</param>
-    /// <param name="Params">
+    /// <param name="templateId">The identifier of the message template.</param>
+    /// <param name="parameters">
     ///     The optional collection of parameters (names and values) that might be required
     ///     to generate a message from the specific template.
     /// </param>
-    public TemplatedMessage(string TemplateId, IReadOnlyDictionary<string, object>? Params = null)
+    public TemplatedMessage(string templateId, IReadOnlyDictionary<string, object>? parameters = null)
     {
-        this.TemplateId = TemplateId;
-        this.Params = Params;
+        TemplateId = templateId;
+        Params = parameters;
     }
 
     /// <summary>
     ///     Gets the identifier of the message template.
     /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("templateId")]
     public string TemplateId { get; init; }
 

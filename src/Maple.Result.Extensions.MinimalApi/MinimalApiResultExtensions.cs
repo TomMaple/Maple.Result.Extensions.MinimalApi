@@ -103,7 +103,7 @@ public static class MinimalApiResultExtensions
         return result.Match(
             value => value is null
                 ? Results.NoContent()
-                : Results.Ok(result.Value),
+                : Results.Ok(value),
             error => error.ToMinimalApiResult(customMapping));
     }
     /// <summary>
@@ -170,7 +170,7 @@ public static class MinimalApiResultExtensions
         return result.Match(
             value => value is null
                 ? Results.StatusCode(successNoResponseStatusCode)
-                : Results.Json(result.Value, statusCode: successStatusCode),
+                : Results.Json(value, statusCode: successStatusCode),
             error => error.ToMinimalApiResult(customMapping));
     }
 

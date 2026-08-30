@@ -32,7 +32,6 @@ public sealed record ErrorDetail
     /// <summary>
     ///     Gets the human-readable explanation specific to this individual error occurrence.
     /// </summary>
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("detail")]
     public string Detail { get; init; }
 
