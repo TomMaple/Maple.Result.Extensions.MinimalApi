@@ -15,7 +15,7 @@ Do you like it? Show your support by giving this project a star!
 
 # Status
 ✅ Basic mapping without configuration.  
-✅ Integration tests.  
+✅ Unit and integration tests.  
 ✅ Custom error mapping passed as a parameter to the extension method.  
 ✅ Support for custom successful status codes.  
 🔲 Documentation.
@@ -92,9 +92,9 @@ Example
             "requiredBalance": 50
         }
     }
-
 }
 ```
+The response also contains the `traceId` extension added by ASP.NET Core.
 
 ## See also
 * [Problem Details for HTTP APIs - RFC 7807 is dead, long live RFC 9457](https://blog.frankel.ch/problem-details-http-apis/)
