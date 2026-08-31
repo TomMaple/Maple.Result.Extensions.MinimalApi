@@ -31,7 +31,7 @@ app.MapDelete("orders/{id}", (int id) => orderService.Delete(id).ToMinimalApiRes
 app.MapGet("orders/{id}", (int id) => orderService.Get(id).ToMinimalApiResult());
 
 // Success -> the given status code
-app.MapPost("orders", (Order order) => orderService.Create(order).ToMinimalApiResult(StatusCodes.Status201Created));
+app.MapPost("orders", (Order order) => orderService.Create(order).ToMinimalApiResult(HttpStatusCode.Created));
 
 // Success -> mapped explicitly, e.g. to return the Location header
 app.MapPost("orders", (Order order) => orderService.Create(order)

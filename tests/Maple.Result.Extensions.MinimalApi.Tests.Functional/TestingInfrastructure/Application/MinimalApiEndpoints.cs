@@ -2,6 +2,7 @@ using Maple.Result.Extensions.MinimalApi.Tests.Functional.TestingInfrastructure.
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using System.Net;
 
 namespace Maple.Result.Extensions.MinimalApi.Tests.Functional.TestingInfrastructure.Application;
 
@@ -58,31 +59,31 @@ internal static class MinimalApiEndpoints
     private static void MapSuccessStatusCodeEndpoints(IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("status-code/success",
-            () => Result.Success().ToMinimalApiResult(StatusCodes.Status202Accepted));
+            () => Result.Success().ToMinimalApiResult(HttpStatusCode.Accepted));
 
         endpoints.MapGet("status-code/success/value",
             () => Result<TestValue>.FromValue(new TestValue(13, "Test value"))
-                .ToMinimalApiResult(StatusCodes.Status201Created));
+                .ToMinimalApiResult(HttpStatusCode.Created));
 
         endpoints.MapGet("status-code/success/null-value",
-            () => Result<TestValue?>.FromValue(null).ToMinimalApiResult(StatusCodes.Status226IMUsed));
+            () => Result<TestValue?>.FromValue(null).ToMinimalApiResult(HttpStatusCode.IMUsed));
 
         endpoints.MapGet("status-code/success/no-response-status-code",
             () => Result<TestValue?>.FromValue(null)
-                .ToMinimalApiResult(StatusCodes.Status203NonAuthoritative, StatusCodes.Status205ResetContent));
+                .ToMinimalApiResult(HttpStatusCode.NonAuthoritativeInformation, HttpStatusCode.ResetContent));
 
         endpoints.MapGet("status-code/error",
-            () => Result.FromError(CreateFailureError()).ToMinimalApiResult(StatusCodes.Status202Accepted));
+            () => Result.FromError(CreateFailureError()).ToMinimalApiResult(HttpStatusCode.Accepted));
 
         // Result<T> with a status code and a positional custom mapping.
         endpoints.MapGet("status-code/error/custom-mapping",
             () => Result<TestValue>.FromError(CreateFailureError())
-                .ToMinimalApiResult(StatusCodes.Status201Created, MapFailureToPaymentRequired));
+                .ToMinimalApiResult(HttpStatusCode.Created, MapFailureToPaymentRequired));
 
         // Result<T> with both status codes and a positional custom mapping.
         endpoints.MapGet("status-code/error/no-response-status-code/custom-mapping",
             () => Result<TestValue>.FromError(CreateFailureError())
-                .ToMinimalApiResult(StatusCodes.Status201Created, StatusCodes.Status205ResetContent,
+                .ToMinimalApiResult(HttpStatusCode.Created, HttpStatusCode.ResetContent,
                     MapFailureToPaymentRequired));
     }
 
