@@ -174,7 +174,7 @@ public class ResultExtensionsMinimalApiFunctionalTests : IClassFixture<TestAppli
               ,{
                   "pointer": "/name",
                   "detail": "must not be empty",
-                  "detailTemplated": { "templateId": "test.name.required", "params": {} }
+                  "detailTemplated": { "templateId": "test.name.required" }
                 }
               ],
               "detailTemplated": {

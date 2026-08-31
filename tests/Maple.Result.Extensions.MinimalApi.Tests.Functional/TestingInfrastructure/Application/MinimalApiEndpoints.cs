@@ -122,8 +122,9 @@ internal static class MinimalApiEndpoints
             // No pointer and no templated message, so both are omitted from the serialized detail.
             error.AddDetail(null, "must be provided");
 
-            // A template id without parameters: AddDetail still yields an empty parameter collection,
-            // unlike the Error factories, which leave it unset.
+            // A template id without parameters: AddDetail yields an empty parameter collection,
+            // which the mapper normalizes away, so "params" is omitted just as it is when the
+            // Error factories leave it unset.
             error.AddDetail("/name", "must not be empty", "test.name.required");
 
             return Result.FromError(error).ToMinimalApiResult();

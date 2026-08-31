@@ -10,10 +10,16 @@
     <File Path="LICENSE" />
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="global.json" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Maple.Result.Extensions.MinimalApi/Maple.Result.Extensions.MinimalApi.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Maple.Result.Extensions.MinimalApi.Tests.Functional/Maple.Result.Extensions.MinimalApi.Tests.Functional.csproj" />
+    <Project Path="tests/Maple.Result.Extensions.MinimalApi.Tests.Unit/Maple.Result.Extensions.MinimalApi.Tests.Unit.csproj" />
   </Folder>
 </Solution>
