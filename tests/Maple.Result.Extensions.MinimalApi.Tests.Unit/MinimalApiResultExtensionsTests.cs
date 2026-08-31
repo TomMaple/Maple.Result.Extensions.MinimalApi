@@ -442,7 +442,7 @@ public class MinimalApiResultExtensionsTests
     }
 
     [Fact]
-    public void ToMinimalApiResult_GenericResultWithErrorAndSuccessStatusCodeAndCustomMapping_ReturnsCustomMappedResult()
+    public void ToMinimalApiResult_GenericResultWithErrorAndBothStatusCodesAndCustomMapping_ReturnsCustomMappedResult()
     {
         // Arrange
         var sut = Result<TestValue>.FromError(CreateFailureError());
@@ -450,6 +450,20 @@ public class MinimalApiResultExtensionsTests
         // Act
         var result = sut.ToMinimalApiResult(
             StatusCodes.Status201Created, StatusCodes.Status205ResetContent, MapFailureToPaymentRequired);
+
+        // Assert
+        var json = result.ShouldBeOfType<JsonHttpResult<TestValue>>();
+        json.StatusCode.ShouldBe(StatusCodes.Status402PaymentRequired);
+    }
+
+    [Fact]
+    public void ToMinimalApiResult_GenericResultWithErrorAndSuccessStatusCodeAndCustomMapping_ReturnsCustomMappedResult()
+    {
+        // Arrange
+        var sut = Result<TestValue>.FromError(CreateFailureError());
+
+        // Act
+        var result = sut.ToMinimalApiResult(StatusCodes.Status201Created, MapFailureToPaymentRequired);
 
         // Assert
         var json = result.ShouldBeOfType<JsonHttpResult<TestValue>>();
