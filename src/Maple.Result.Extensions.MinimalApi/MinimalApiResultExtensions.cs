@@ -2,6 +2,7 @@ using Maple.Result.Extensions.MinimalApi.Mappers;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 namespace Maple.Result.Extensions.MinimalApi;
 
@@ -45,13 +46,13 @@ public static class MinimalApiResultExtensions
     ///     It is used when it returns a non-<see langword="null" /> value.
     /// </param>
     /// <returns>An <see cref="IResult" /> representing the <see cref="Result" />.</returns>
-    public static IResult ToMinimalApiResult(this Result result, int successStatusCode,
+    public static IResult ToMinimalApiResult(this Result result, HttpStatusCode successStatusCode,
         Func<Error, IResult?>? customMapping = null)
     {
         ArgumentNullException.ThrowIfNull(result);
 
         return result.Match(
-            () => Results.StatusCode(successStatusCode),
+            () => Results.StatusCode((int)successStatusCode),
             error => error.ToMinimalApiResult(customMapping));
     }
 
@@ -125,7 +126,7 @@ public static class MinimalApiResultExtensions
     ///     It is used when it returns a non-<see langword="null" /> value.
     /// </param>
     /// <returns>An <see cref="IResult" /> representing the <see cref="Result{T}" />.</returns>
-    public static IResult ToMinimalApiResult<T>(this Result<T> result, int successStatusCode,
+    public static IResult ToMinimalApiResult<T>(this Result<T> result, HttpStatusCode successStatusCode,
         Func<Error, IResult?>? customMapping = null)
     {
         return result.ToMinimalApiResult(successStatusCode, successStatusCode, customMapping);
@@ -162,15 +163,15 @@ public static class MinimalApiResultExtensions
                         "options configured for the application, exactly as the unannotated Results.Ok does. " +
                         "Registering the serialized type with a JsonSerializerContext stays the caller's " +
                         "responsibility, as it is for every other Results method that writes a JSON body.")]
-    public static IResult ToMinimalApiResult<T>(this Result<T> result, int successStatusCode,
-        int successNoResponseStatusCode, Func<Error, IResult?>? customMapping = null)
+    public static IResult ToMinimalApiResult<T>(this Result<T> result, HttpStatusCode successStatusCode,
+        HttpStatusCode successNoResponseStatusCode, Func<Error, IResult?>? customMapping = null)
     {
         ArgumentNullException.ThrowIfNull(result);
 
         return result.Match(
             value => value is null
-                ? Results.StatusCode(successNoResponseStatusCode)
-                : Results.Json(value, statusCode: successStatusCode),
+                ? Results.StatusCode((int)successNoResponseStatusCode)
+                : Results.Json(value, statusCode: (int)successStatusCode),
             error => error.ToMinimalApiResult(customMapping));
     }
 

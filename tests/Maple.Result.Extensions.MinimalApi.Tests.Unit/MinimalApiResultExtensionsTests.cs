@@ -2,6 +2,7 @@ using Maple.Result.Extensions.MinimalApi.Tests.Unit.TestingInfrastructure.Models
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System;
+using System.Net;
 
 namespace Maple.Result.Extensions.MinimalApi.Tests.Unit;
 
@@ -230,7 +231,7 @@ public class MinimalApiResultExtensionsTests
         var sut = Result.Success();
 
         // Act
-        var result = sut.ToMinimalApiResult(StatusCodes.Status202Accepted);
+        var result = sut.ToMinimalApiResult(HttpStatusCode.Accepted);
 
         // Assert
         var statusCode = result.ShouldBeOfType<StatusCodeHttpResult>();
@@ -244,7 +245,7 @@ public class MinimalApiResultExtensionsTests
         var sut = Result.FromError(CreateFailureError());
 
         // Act
-        var result = sut.ToMinimalApiResult(StatusCodes.Status202Accepted);
+        var result = sut.ToMinimalApiResult(HttpStatusCode.Accepted);
 
         // Assert
         var problem = result.ShouldBeOfType<ProblemHttpResult>();
@@ -258,7 +259,7 @@ public class MinimalApiResultExtensionsTests
         var sut = Result.FromError(CreateFailureError());
 
         // Act
-        var result = sut.ToMinimalApiResult(StatusCodes.Status202Accepted, MapFailureToPaymentRequired);
+        var result = sut.ToMinimalApiResult(HttpStatusCode.Accepted, MapFailureToPaymentRequired);
 
         // Assert
         var json = result.ShouldBeOfType<JsonHttpResult<TestValue>>();
@@ -390,7 +391,7 @@ public class MinimalApiResultExtensionsTests
         var sut = Result<TestValue>.FromValue(value);
 
         // Act
-        var result = sut.ToMinimalApiResult(StatusCodes.Status201Created);
+        var result = sut.ToMinimalApiResult(HttpStatusCode.Created);
 
         // Assert
         var json = result.ShouldBeOfType<JsonHttpResult<TestValue>>();
@@ -405,7 +406,7 @@ public class MinimalApiResultExtensionsTests
         var sut = Result<TestValue?>.FromValue(null);
 
         // Act
-        var result = sut.ToMinimalApiResult(StatusCodes.Status226IMUsed);
+        var result = sut.ToMinimalApiResult(HttpStatusCode.IMUsed);
 
         // Assert
         var statusCode = result.ShouldBeOfType<StatusCodeHttpResult>();
@@ -420,7 +421,7 @@ public class MinimalApiResultExtensionsTests
 
         // Act
         var result = sut.ToMinimalApiResult(
-            StatusCodes.Status203NonAuthoritative, StatusCodes.Status205ResetContent);
+            HttpStatusCode.NonAuthoritativeInformation, HttpStatusCode.ResetContent);
 
         // Assert
         var statusCode = result.ShouldBeOfType<StatusCodeHttpResult>();
@@ -434,7 +435,7 @@ public class MinimalApiResultExtensionsTests
         var sut = Result<TestValue>.FromError(CreateFailureError());
 
         // Act
-        var result = sut.ToMinimalApiResult(StatusCodes.Status201Created);
+        var result = sut.ToMinimalApiResult(HttpStatusCode.Created);
 
         // Assert
         var problem = result.ShouldBeOfType<ProblemHttpResult>();
@@ -449,7 +450,7 @@ public class MinimalApiResultExtensionsTests
 
         // Act
         var result = sut.ToMinimalApiResult(
-            StatusCodes.Status201Created, StatusCodes.Status205ResetContent, MapFailureToPaymentRequired);
+            HttpStatusCode.Created, HttpStatusCode.ResetContent, MapFailureToPaymentRequired);
 
         // Assert
         var json = result.ShouldBeOfType<JsonHttpResult<TestValue>>();
@@ -463,7 +464,7 @@ public class MinimalApiResultExtensionsTests
         var sut = Result<TestValue>.FromError(CreateFailureError());
 
         // Act
-        var result = sut.ToMinimalApiResult(StatusCodes.Status201Created, MapFailureToPaymentRequired);
+        var result = sut.ToMinimalApiResult(HttpStatusCode.Created, MapFailureToPaymentRequired);
 
         // Assert
         var json = result.ShouldBeOfType<JsonHttpResult<TestValue>>();
@@ -556,7 +557,7 @@ public class MinimalApiResultExtensionsTests
     public void ToMinimalApiResult_NullResultWithSuccessStatusCode_ThrowsArgumentNullException()
     {
         // Act
-        var act = () => ((Result)null!).ToMinimalApiResult(StatusCodes.Status202Accepted);
+        var act = () => ((Result)null!).ToMinimalApiResult(HttpStatusCode.Accepted);
 
         // Assert
         act.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("result");
@@ -609,7 +610,7 @@ public class MinimalApiResultExtensionsTests
     public void ToMinimalApiResult_NullGenericResultWithSuccessStatusCode_ThrowsArgumentNullException()
     {
         // Act
-        var act = () => ((Result<TestValue>)null!).ToMinimalApiResult(StatusCodes.Status201Created);
+        var act = () => ((Result<TestValue>)null!).ToMinimalApiResult(HttpStatusCode.Created);
 
         // Assert
         act.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("result");
