@@ -15,5 +15,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Maple.Result.Extensions.MinimalApi.Tests.Functional/Maple.Result.Extensions.MinimalApi.Tests.Functional.csproj" />
+    <Project Path="tests/Maple.Result.Extensions.MinimalApi.Tests.Unit/Maple.Result.Extensions.MinimalApi.Tests.Unit.csproj" />
   </Folder>
 </Solution>
