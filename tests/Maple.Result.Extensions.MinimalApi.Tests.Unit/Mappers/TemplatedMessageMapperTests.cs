@@ -1,5 +1,5 @@
-using Maple.Result.Extensions.MinimalApi.Mappers;
 using System.Collections.Generic;
+using Sut = Maple.Result.Extensions.MinimalApi.Mappers.TemplatedMessageMapper;
 
 namespace Maple.Result.Extensions.MinimalApi.Tests.Unit.Mappers;
 
@@ -15,10 +15,10 @@ public class TemplatedMessageMapperTests
     public void Map_NullSource_ReturnsNull()
     {
         // Act
-        var templatedMessage = TemplatedMessageMapper.Map(null);
+        var result = Sut.Map(null);
 
         // Assert
-        templatedMessage.ShouldBeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -28,12 +28,12 @@ public class TemplatedMessageMapperTests
         var source = new TemplatedMessage(TemplateId);
 
         // Act
-        var templatedMessage = TemplatedMessageMapper.Map(source);
+        var result = Sut.Map(source);
 
         // Assert
-        templatedMessage.ShouldNotBeNull();
-        templatedMessage.TemplateId.ShouldBe(TemplateId);
-        templatedMessage.Params.ShouldBeNull();
+        result.ShouldNotBeNull();
+        result.TemplateId.ShouldBe(TemplateId);
+        result.Params.ShouldBeNull();
     }
 
     [Fact]
@@ -44,14 +44,29 @@ public class TemplatedMessageMapperTests
         var source = new TemplatedMessage(TemplateId, parameters);
 
         // Act
-        var templatedMessage = TemplatedMessageMapper.Map(source);
+        var result = Sut.Map(source);
 
         // Assert
-        templatedMessage.ShouldNotBeNull();
-        templatedMessage.TemplateId.ShouldBe(TemplateId);
-        templatedMessage.Params.ShouldNotBeNull();
-        templatedMessage.Params.Count.ShouldBe(2);
-        templatedMessage.Params["key1"].ShouldBe("value1");
-        templatedMessage.Params["key2"].ShouldBe(123);
+        result.ShouldNotBeNull();
+        result.TemplateId.ShouldBe(TemplateId);
+        result.Params.ShouldNotBeNull();
+        result.Params.Count.ShouldBe(2);
+        result.Params["key1"].ShouldBe("value1");
+        result.Params["key2"].ShouldBe(123);
+    }
+
+    [Fact]
+    public void Map_SourceWithEmptyParams_ReturnsTemplateIdWithoutParams()
+    {
+        // Arrange
+        var source = new TemplatedMessage(TemplateId, new Dictionary<string, object>());
+
+        // Act
+        var result = Sut.Map(source);
+
+        // Assert
+        result.ShouldNotBeNull();
+        result.TemplateId.ShouldBe(TemplateId);
+        result.Params.ShouldBeNull();
     }
 }

@@ -1,5 +1,5 @@
-using Maple.Result.Extensions.MinimalApi.Mappers;
 using System.Collections.Generic;
+using Sut = Maple.Result.Extensions.MinimalApi.Mappers.ErrorDetailsMapper;
 
 namespace Maple.Result.Extensions.MinimalApi.Tests.Unit.Mappers;
 
@@ -20,12 +20,12 @@ public class ErrorDetailsMapperTests
         var source = new ErrorDetail(PropertyPointer, Detail);
 
         // Act
-        var errorDetail = ErrorDetailsMapper.Map(source);
+        var result = Sut.Map(source);
 
         // Assert
-        errorDetail.PropertyPointer.ShouldBe(PropertyPointer);
-        errorDetail.Detail.ShouldBe(Detail);
-        errorDetail.DetailTemplated.ShouldBeNull();
+        result.PropertyPointer.ShouldBe(PropertyPointer);
+        result.Detail.ShouldBe(Detail);
+        result.DetailTemplated.ShouldBeNull();
     }
 
     [Fact]
@@ -36,15 +36,31 @@ public class ErrorDetailsMapperTests
         var source = new ErrorDetail(PropertyPointer, Detail, new TemplatedMessage(TemplateId, parameters));
 
         // Act
-        var errorDetail = ErrorDetailsMapper.Map(source);
+        var result = Sut.Map(source);
 
         // Assert
-        errorDetail.PropertyPointer.ShouldBe(PropertyPointer);
-        errorDetail.Detail.ShouldBe(Detail);
-        errorDetail.DetailTemplated.ShouldNotBeNull();
-        errorDetail.DetailTemplated.TemplateId.ShouldBe(TemplateId);
-        errorDetail.DetailTemplated.Params.ShouldNotBeNull();
-        errorDetail.DetailTemplated.Params["pk1"].ShouldBe("pv1");
+        result.PropertyPointer.ShouldBe(PropertyPointer);
+        result.Detail.ShouldBe(Detail);
+        result.DetailTemplated.ShouldNotBeNull();
+        result.DetailTemplated.TemplateId.ShouldBe(TemplateId);
+        result.DetailTemplated.Params.ShouldNotBeNull();
+        result.DetailTemplated.Params["pk1"].ShouldBe("pv1");
+    }
+
+    [Fact]
+    public void Map_SourceWithTemplatedDetailWithoutParams_ReturnsTemplatedDetailWithoutParams()
+    {
+        // Arrange
+        var source = new ErrorDetail(PropertyPointer, Detail,
+            new TemplatedMessage(TemplateId, new Dictionary<string, object>()));
+
+        // Act
+        var result = Sut.Map(source);
+
+        // Assert
+        result.DetailTemplated.ShouldNotBeNull();
+        result.DetailTemplated.TemplateId.ShouldBe(TemplateId);
+        result.DetailTemplated.Params.ShouldBeNull();
     }
 
     [Fact]
@@ -54,10 +70,10 @@ public class ErrorDetailsMapperTests
         var source = new ErrorDetail(null, Detail);
 
         // Act
-        var errorDetail = ErrorDetailsMapper.Map(source);
+        var result = Sut.Map(source);
 
         // Assert
-        errorDetail.PropertyPointer.ShouldBeNull();
-        errorDetail.Detail.ShouldBe(Detail);
+        result.PropertyPointer.ShouldBeNull();
+        result.Detail.ShouldBe(Detail);
     }
 }

@@ -1,7 +1,7 @@
-using Maple.Result.Extensions.MinimalApi.Mappers;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
+using Sut = Maple.Result.Extensions.MinimalApi.Mappers.ErrorCategoryMapper;
 
 namespace Maple.Result.Extensions.MinimalApi.Tests.Unit.Mappers;
 
@@ -21,10 +21,10 @@ public class ErrorCategoryMapperTests
     public void GetStatusCode_KnownCategory_ReturnsMatchingStatusCode(ErrorCategory category, int expectedStatusCode)
     {
         // Act
-        var statusCode = ErrorCategoryMapper.GetStatusCode(category);
+        var result = Sut.GetStatusCode(category);
 
         // Assert
-        statusCode.ShouldBe(expectedStatusCode);
+        result.ShouldBe(expectedStatusCode);
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public class ErrorCategoryMapperTests
 
         // Act
         var unmappedCategories = categories
-            .Where(category => Record.Exception(() => ErrorCategoryMapper.GetStatusCode(category)) is not null)
+            .Where(category => Record.Exception(() => Sut.GetStatusCode(category)) is not null)
             .ToArray();
 
         // Assert
@@ -53,9 +53,9 @@ public class ErrorCategoryMapperTests
     public void GetStatusCode_UndeclaredCategory_ThrowsNotImplementedException()
     {
         // Arrange
-        const ErrorCategory undeclaredCategory = (ErrorCategory)int.MaxValue;
+        const ErrorCategory UndeclaredCategory = (ErrorCategory)int.MaxValue;
 
         // Act & Assert
-        Should.Throw<NotImplementedException>(() => ErrorCategoryMapper.GetStatusCode(undeclaredCategory));
+        Should.Throw<NotImplementedException>(() => Sut.GetStatusCode(UndeclaredCategory));
     }
 }

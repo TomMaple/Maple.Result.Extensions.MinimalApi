@@ -1,4 +1,4 @@
-using Maple.Result.Extensions.MinimalApi.Mappers;
+using Sut = Maple.Result.Extensions.MinimalApi.Mappers.ErrorMapper;
 
 namespace Maple.Result.Extensions.MinimalApi.Tests.Unit.Mappers;
 
@@ -26,10 +26,10 @@ public class ErrorMapperTests
         var error = Error.Failure(ErrorUri.Tag(TypeUri), Title);
 
         // Act
-        var extensions = ErrorMapper.MapExtensions(error);
+        var result = Sut.MapExtensions(error);
 
         // Assert
-        extensions.ShouldBeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -39,10 +39,10 @@ public class ErrorMapperTests
         var error = Error.Failure(ErrorUri.Tag(TypeUri), Title, ErrorDetail, ErrorUri.Locator(InstanceUri));
 
         // Act
-        var extensions = ErrorMapper.MapExtensions(error);
+        var result = Sut.MapExtensions(error);
 
         // Assert
-        extensions.ShouldBeNull();
+        result.ShouldBeNull();
     }
 
     #endregion
@@ -57,13 +57,13 @@ public class ErrorMapperTests
             TemplateId, ("key1", "value1"), ("key2", 123));
 
         // Act
-        var extensions = ErrorMapper.MapExtensions(error);
+        var result = Sut.MapExtensions(error);
 
         // Assert
-        extensions.ShouldNotBeNull();
-        extensions.Keys.ShouldBe([DetailTemplatedKey]);
+        result.ShouldNotBeNull();
+        result.Keys.ShouldBe([DetailTemplatedKey]);
 
-        var detailTemplated = extensions[DetailTemplatedKey].ShouldBeOfType<ViewModels.TemplatedMessage>();
+        var detailTemplated = result[DetailTemplatedKey].ShouldBeOfType<ViewModels.TemplatedMessage>();
         detailTemplated.TemplateId.ShouldBe(TemplateId);
         detailTemplated.Params.ShouldNotBeNull();
         detailTemplated.Params["key1"].ShouldBe("value1");
@@ -83,13 +83,13 @@ public class ErrorMapperTests
             .AddDetail("#/property2", "Property 2 failure detail.");
 
         // Act
-        var extensions = ErrorMapper.MapExtensions(error);
+        var result = Sut.MapExtensions(error);
 
         // Assert
-        extensions.ShouldNotBeNull();
-        extensions.Keys.ShouldBe([ErrorsKey]);
+        result.ShouldNotBeNull();
+        result.Keys.ShouldBe([ErrorsKey]);
 
-        var errorDetails = extensions[ErrorsKey].ShouldBeOfType<ViewModels.ErrorDetail[]>();
+        var errorDetails = result[ErrorsKey].ShouldBeOfType<ViewModels.ErrorDetail[]>();
         errorDetails.Length.ShouldBe(2);
 
         var templatedErrorDetail = errorDetails[0];
@@ -121,16 +121,16 @@ public class ErrorMapperTests
             .AddDetail("#/property1", "Property 1 failure detail.");
 
         // Act
-        var extensions = ErrorMapper.MapExtensions(error);
+        var result = Sut.MapExtensions(error);
 
         // Assert
-        extensions.ShouldNotBeNull();
-        extensions.Count.ShouldBe(2);
-        extensions.ShouldContainKey(ErrorsKey);
-        extensions.ShouldContainKey(DetailTemplatedKey);
+        result.ShouldNotBeNull();
+        result.Count.ShouldBe(2);
+        result.ShouldContainKey(ErrorsKey);
+        result.ShouldContainKey(DetailTemplatedKey);
 
-        extensions[ErrorsKey].ShouldBeOfType<ViewModels.ErrorDetail[]>().Length.ShouldBe(1);
-        extensions[DetailTemplatedKey].ShouldBeOfType<ViewModels.TemplatedMessage>().TemplateId.ShouldBe(TemplateId);
+        result[ErrorsKey].ShouldBeOfType<ViewModels.ErrorDetail[]>().Length.ShouldBe(1);
+        result[DetailTemplatedKey].ShouldBeOfType<ViewModels.TemplatedMessage>().TemplateId.ShouldBe(TemplateId);
     }
 
     #endregion
